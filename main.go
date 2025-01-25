@@ -16,7 +16,7 @@ func main() {
 		port = "3000"
 	}
 
-	err := http.ListenAndServe(":" + port, router)
+	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		fmt.Printf("Error starting server: %v\n", err)
 		os.Exit(1)
@@ -33,8 +33,13 @@ func Router() *mux.Router {
 		}
 	})
 
-	router.HandleFunc("/tasks", HandleTasks).Methods("GET", "POST")
-	router.HandleFunc("/tasks/{id}", GetTask)
+	router.HandleFunc("/tasks", GetTasks).Methods("GET")
+	router.HandleFunc("/tasks", CreateTask).Methods("POST")
+
+	router.HandleFunc("/tasks/{id}", GetTask).Methods("GET")
+	router.HandleFunc("/tasks/{id}", RemoveTask).Methods("DELETE")
+
+	router.HandleFunc("/tasks/{id}/complete", CompleteTask).Methods("PUT")
 
 	return router
 }

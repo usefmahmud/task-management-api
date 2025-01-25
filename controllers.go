@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Response struct {
@@ -63,7 +65,70 @@ func HandleTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTask(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// task_id := vars["id"]
+	vars := mux.Vars(r)
+	task_id := vars["id"]
 
+	err, task := getTask(task_id, &Tasks)
+	if err != nil {
+		res := Response{
+			Status: 404,
+			Data: map[string]string{
+				"error": err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
+
+	res := Response{
+		Status: 200,
+		Data:   task,
+	}
+	json.NewEncoder(w).Encode(res)
+}
+
+func CompleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	task_id := vars["id"]
+
+	err, task := completeTask(task_id, &Tasks)
+	if err != nil {
+		res := Response{
+			Status: 404,
+			Data: map[string]string{
+				"error": err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
+
+	res := Response{
+		Status: 200,
+		Data:   task,
+	}
+	json.NewEncoder(w).Encode(res)
+}
+
+func RemoveTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	task_id := vars["id"]
+
+	err := removeTask(task_id, &Tasks)
+	if err != nil {
+		res := Response{
+			Status: 404,
+			Data: map[string]string{
+				"error": err.Error(),
+			},
+		}
+		json.NewEncoder(w).Encode(res)
+		return
+	}
+
+	res := Response{
+		Status: 200,
+		Data:   "Task removed successfully",
+	}
+	json.NewEncoder(w).Encode(res)
 }
