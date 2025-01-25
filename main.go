@@ -11,12 +11,16 @@ import (
 func main() {
 	router := Router()
 
-	err := http.ListenAndServe(":8000", router)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	err := http.ListenAndServe(":" + port, router)
 	if err != nil {
 		fmt.Printf("Error starting server: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Println("Server started on http://localhost:8000")
 }
 
 func Router() *mux.Router {
